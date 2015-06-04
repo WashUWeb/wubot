@@ -3,29 +3,29 @@
 //
 // Dependencies:
 //   xmlhttprequest
+//   xml2json
 //
 // Configuration:
-//   None
+//   Should have a config.json file containing api key and base domain
 //
 // Commands:
 //	 wubot any new comments ? - returns any new comments on kanbanize cards
-//   hubot is it weekend ?  - returns whether is it weekend or not
-//   hubot is it holiday ?  - returns whether is it holiday or not
  
 
 module.exports = function(robot) {
 
- 
+    var kanEnum = require('../config.json');
 
     var KanbanizeJS = function(options) {
         var domain;
         if (null != options.email && null != options.password){
             this.email = options.email;
+            this.email = options.email;
             this.password = options.password;
         }
 
         this.apikey = null != options.apikey ? options.apikey : kanEnum.API_KEY;
-        domain = null != options.domain ? options.domain + '.' : kanEnum.BASE_DOMAIN + '.';
+        domain = null != options.domain ? options.domain + '.' : " ";
         this.kanbanize_url = "http://" + domain + kanEnum.BASE_URL;
     }
 
@@ -40,7 +40,7 @@ module.exports = function(robot) {
         return url.join('/');
     };
 
-    KanbanizeJS.prototype.call = function(apiCall, msg) {
+    KanbanizeJS.prototype.call = function(apiCall, res) {
         var l, url, xmlhttp, response;
         if (apiCall["function"] !== 'login' && (this.apikey == null)) {
             l = this.login();
@@ -54,9 +54,9 @@ module.exports = function(robot) {
             if (xmlhttp.readyState === 4) {
                 if (xmlhttp.status === 200) {
                     response = xmlhttp.responseText;
-                    return msg.reply(response);
+                    return res.reply(response);
                 } else if(xmlhttp.status === 400) {
-                    return msg.reply('No comments in the last hour')
+                    return res.reply('No comments in the last hour')
                 }else {
                     return console.log('something else other than 200 was returned');
                 }
@@ -81,10 +81,9 @@ module.exports = function(robot) {
         return this.call(call);
     };
 
-
     KanbanizeJS.prototype.date_repr = function(date){
         var newdate = date.getFullYear() + "-"  
-                        + (date.getMonth()+1)  + "-" 
+                        + (date.getMonth() + 1)  + "-" 
                         + date.getDate() + " "
                         + date.getHours() + ":"  
                         + date.getMinutes() + ":" 
@@ -92,8 +91,7 @@ module.exports = function(robot) {
             return newdate;
     };
 	
-
-	robot.respond(/any new comments\s?\?/i, function(msg){
+	robot.respond(/any new comments\s?\?/i, function(res){
 
 		var kanbanize = new KanbanizeJS({
             apikey : kanEnum.API_KEY,
@@ -114,7 +112,7 @@ module.exports = function(robot) {
             }
         }
 
-        kanbanize.call(get_board_activities, msg);
+        kanbanize.call(get_board_activities, res);
 	});
 
 
