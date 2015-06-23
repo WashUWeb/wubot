@@ -1,4 +1,4 @@
-var kanEnum = require('./config.json');
+var kanEnum = require('../config.json');
 
 var KanbanizeJS = function(options) {        
     this.apikey = null != options.apikey ? options.apikey : kanEnum.API_KEY;

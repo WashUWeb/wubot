@@ -14,7 +14,7 @@
 
 module.exports = function(robot) {
 
-    var KanbanizeJS = require('../KanbanizeJS');
+    var KanbanizeJS = require('../libs/KanbanizeJS');
     var cron = require('cron');
     var kanbanize = KanbanizeJS.create({});
 
