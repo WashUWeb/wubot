@@ -6,7 +6,8 @@
 //   xml2json
 //
 // Configuration:
-//   Should have a config.json file containing board id, api key and base domain
+//   Should either have a config.json file containing board id, api key and base domain or 
+//   environment variables containing this info
 //
 // Commands:
 //	 wubot any new comments ? - returns any new comments on kanbanize cards

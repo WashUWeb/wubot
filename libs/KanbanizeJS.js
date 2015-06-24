@@ -1,9 +1,7 @@
-var kanEnum = require('../config.json');
-
 var KanbanizeJS = function(options) {        
-    this.apikey = null != options.apikey ? options.apikey : kanEnum.API_KEY;
-    var domain = null != options.domain ? options.domain + '.' : kanEnum.BASE_DOMAIN + '.';
-    this.kanbanize_url = "http://" + domain + kanEnum.BASE_URL;
+    this.apikey = null != options.apikey ? options.apikey : process.env.KANBANIZE_API_KEY;
+    var domain = null != options.domain ? options.domain + '.' : process.env.KANBANIZE_BASE_DOMAIN + '.';
+    this.kanbanize_url = "http://" + domain + process.env.KANBANIZE_BASE_URL;
 }
 
 KanbanizeJS.prototype._getUrl = function(call) {
@@ -63,7 +61,7 @@ KanbanizeJS.prototype.retrieveComments = function(callback){
     get_board_activities = {
         "function": 'get_board_activities',
         data:{
-            boardid : kanEnum.BOARD_ID,
+            boardid : process.env.KANBANIZE_BOARD_ID,
             fromdate : fromTime,
             todate : endTime,
             history : 'yes',
