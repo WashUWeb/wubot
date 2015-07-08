@@ -34,14 +34,14 @@ KanbanizeJS.prototype.call = function(apiCall, callback) {
             } else if(xmlhttp.status === 400) {
                 callback(noComments);
             }else {
-                console.log('error code ' + xmlhttp.status + "was received");
+                console.log('error code ' + xmlhttp.status + " was received");
                 callback(noComments);
             }
         }
     };
 
     xmlhttp.open("POST", url, true);
-    //console.log(decodeURI(url));   Debugging
+    console.log(decodeURI(url));   //Debugging
     xmlhttp.setRequestHeader("apikey", this.apikey);
     xmlhttp.send();        
 };
