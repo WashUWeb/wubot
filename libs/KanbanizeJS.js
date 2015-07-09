@@ -41,7 +41,7 @@ KanbanizeJS.prototype.call = function(apiCall, callback) {
     };
 
     xmlhttp.open("POST", url, true);
-    console.log(decodeURI(url));   //Debugging
+    //console.log(decodeURI(url));   //Debugging
     xmlhttp.setRequestHeader("apikey", this.apikey);
     xmlhttp.send();        
 };

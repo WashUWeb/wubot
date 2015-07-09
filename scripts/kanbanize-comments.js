@@ -45,7 +45,7 @@ module.exports = function(robot) {
     //hour during the working week.
     var cronJob = cron.job("00 09-17 * * 1-5", function(){
         //TODO: Find out how to get Slack room name
-        var room = 'Shell';
+        var room = 'general';
         kanbanize.retrieveComments(function(response){
             newComments = parseResponse(response);
             robot.messageRoom(room, newComments);
