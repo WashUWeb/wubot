@@ -6,8 +6,8 @@
   "description": "A bot for WUSTLweb",
   "dependencies": {
     "cron": "^1.0.9",
-    "xmlhttprequest":^"0.0.1",
-    "xml2json":^"0.0.1"
+    "xmlhttprequest":"^0.0.1",
+    "xml2json":"^0.0.1"
     "hubot": "^2.13.2",
     "hubot-bitbucket-pr": "^0.1.1",
     "hubot-diagnostics": "0.0.1",
