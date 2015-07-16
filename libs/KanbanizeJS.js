@@ -25,11 +25,7 @@ KanbanizeJS.prototype.call = function(apiCall, callback) {
         var noComments = "No comments in the last hour";
         if (xmlhttp.readyState === 4) {
             if (xmlhttp.status === 200) {
-                var parser = require('xml2json');
-                var options =   { 
-                                    "sanitize" : false,
-                                };
-                response = JSON.parse(parser.toJson(xmlhttp.responseText, options));
+                response = JSON.parse(xmlhttp.responseText);
                 callback(response);
             } else if(xmlhttp.status === 400) {
                 callback(noComments);
@@ -41,7 +37,7 @@ KanbanizeJS.prototype.call = function(apiCall, callback) {
     };
 
     xmlhttp.open("POST", url, true);
-    //console.log(decodeURI(url));   //Debugging
+    console.log(decodeURI(url));   //Debugging
     xmlhttp.setRequestHeader("apikey", this.apikey);
     xmlhttp.send();        
 };
@@ -56,6 +52,7 @@ KanbanizeJS.prototype.dateRep = function(date){
 KanbanizeJS.prototype.retrieveComments = function(callback){
     var today = new Date().getTime(); 
     var fromTime = this.dateRep(new Date(today));
+    console.log(fromTime);
     var endTime = this.dateRep(new Date(today + (1000*60*60*24)));  //next day
 
     get_board_activities = {
@@ -65,7 +62,8 @@ KanbanizeJS.prototype.retrieveComments = function(callback){
             fromdate : fromTime,
             todate : endTime,
             history : 'yes',
-            eventtype : 'Comments',
+            eventtype : 'Comments',        
+            format:'json',
         }
     }
 
