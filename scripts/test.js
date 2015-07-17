@@ -10,7 +10,7 @@
 // Commands:
 //   hubot is it weekend ?  - returns whether is it weekend or not
 //   hubot is it holiday ?  - returns whether is it holiday or not
-
+/*
 module.exports = function(robot) {
 
 	robot.respond(/is it (weekend|holiday)\s?\?/i, function(msg){
@@ -21,4 +21,4 @@ module.exports = function(robot) {
 	robot.hear(/whatever/i, function(msg){
 	    msg.reply("too sassy");
 	});	
-}
+}*/
