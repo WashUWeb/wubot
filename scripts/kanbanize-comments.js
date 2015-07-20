@@ -72,7 +72,7 @@ module.exports = function(robot) {
 
     /*Function to format and display any obtained comment in given Slack room*/
     var displayComment = function(comment, room, commentColor){
-        link = "https://wustlpa.kanbanize.com/ctrl_board/9/" + comment.taskId;
+        link = "https://wustlpa.kanbanize.com/ctrl_board/9/" + comment.taskid;
         var msg = {
                   message: {
                     reply_to: "general",
