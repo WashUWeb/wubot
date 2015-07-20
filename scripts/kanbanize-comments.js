@@ -71,7 +71,7 @@ module.exports = function(robot) {
     };
 
     /*Function to format and display any obtained comment in given Slack room*/
-    var displayComment = function(comment, room, color){
+    var displayComment = function(comment, room, commentColor){
         
         var msg = {
                   message: {
@@ -86,7 +86,7 @@ module.exports = function(robot) {
                     + comment.taskid + "`: \"" + comment.text 
                     + "\" \n\n" + "http://wustlpa.kanbanize.com/ctrl_board/9",
           pretext: '',
-          color: color,
+          color: commentColor,
           mrkdwn_in: ["text", "title", "fallback", "fields"],
           fields: [
             {
@@ -95,7 +95,7 @@ module.exports = function(robot) {
               short: true
             }, {
               title: comment.taskid,
-              value: "http://wustlpa.kanbanize.com/ctrl_board/9",
+              title_link: "http://wustlpa.kanbanize.com/ctrl_board/9",
               short: true
             }
           ]
