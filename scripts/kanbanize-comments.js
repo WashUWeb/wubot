@@ -72,7 +72,7 @@ module.exports = function(robot) {
 
     /*Function to format and display any obtained comment in given Slack room*/
     var displayComment = function(comment, room, commentColor){
-        
+        link = "https://wustlpa.kanbanize.com/ctrl_board/9/" + comment.taskId;
         var msg = {
                   message: {
                     reply_to: "general",
@@ -84,7 +84,7 @@ module.exports = function(robot) {
           text: comment.event,
           fallback: comment.author + " *added a comment* on `" 
                     + comment.taskid + "`: \"" + comment.text 
-                    + "\" \n\n" + "http://wustlpa.kanbanize.com/ctrl_board/9",
+                    + "\" \n\n" + link,
           pretext: '',
           color: commentColor,
           mrkdwn_in: ["text", "title", "fallback", "fields"],
@@ -95,7 +95,7 @@ module.exports = function(robot) {
               short: true
             }, {
               title: comment.taskid,
-              value: "<http://wustlpa.kanbanize.com/ctrl_board/9/|KanbanBoard>",
+              value: "<" + link + "|Link to Card>",
               short: true
             }
           ]
