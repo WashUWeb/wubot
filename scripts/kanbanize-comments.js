@@ -52,6 +52,12 @@ module.exports = function(robot) {
         name and channel name are analogous. Can link the lane name and channel
         name using a json file if necessary*/
     var displayToLane = function(comment){
+        var channels = {
+                            "TAB" : "tab",
+                            "Bjorn" : "pod-bjorn",
+                            "Pod Squad" : "pod-squad"
+        };
+
         var taskID = comment.taskid;
         var task_data = JSON.stringify({
                             command: "get_task_details",
@@ -63,9 +69,9 @@ module.exports = function(robot) {
                         });
         var apiCall = JSON.parse(task_data);
         callKanbanize(apiCall, function(response){
-            var room = response.lanename;
+            var room = channels[response.lanename];
             var color = response.color;
-            console.log(color);
+            console.log(room);
             displayComment(comment, room, color);
         });
     };
@@ -81,22 +87,23 @@ module.exports = function(robot) {
                 };
 
         var content = {
-          text: comment.event,
+          text: '',
           fallback: comment.author + " *added a comment* on `" 
                     + comment.taskid + "`: \"" + comment.text 
                     + "\" \n\n" + link,
-          pretext: '',
+          pretext: comment.event + " by *" + comment.author + "*\n",
           color: commentColor,
-          mrkdwn_in: ["text", "title", "fallback", "fields"],
+          mrkdwn_in: ["pretext", "title", "fallback", "fields"],
           fields: [
             {
-              title: comment.author,
-              value: comment.text,
-              short: true
-            }, {
-              title: comment.taskid,
-              value: "<" + link + "|Link to Card>",
-              short: true
+                title: "Comment",
+                value: comment.text,
+                short: true
+            }, 
+            {
+                title: "Task ID",
+                value: "<" + link + "|" + comment.taskid + ">",
+                short: true
             }
           ]
         };
@@ -108,8 +115,10 @@ module.exports = function(robot) {
     /*Function to get all comments made from a given time to now*/
     var getComments = function(time){
         //How far back to query api
-        var fromTime = null != time? new Date(Date.now - time): new Date();
+        var fromTime = null != time? new Date(Date.now() - time): new Date();
         var from = kanbanizeDate(fromTime);
+        console.log(fromTime);
+        console.log(from);
         //Next day; ensures all comments include current day.
         var end = kanbanizeDate(new Date(Date.now() + (1000*60*60*24))); 
         
@@ -127,6 +136,7 @@ module.exports = function(robot) {
                         });
         var apiCall = JSON.parse(board_data);
         callKanbanize(apiCall, function(response){
+            console.log(response);
             var comments = response.activities;
             var earliestTime = new Date(Date.now() - (1000*60*60*15))  //default
 
@@ -145,19 +155,20 @@ module.exports = function(robot) {
         });
     };
     
-	/*Returns any new comments added within the hour every  
-      hour during the working week.*/
-    var cronJob = cron.job("*/15 06-16 * * 1-5", function(){
-        //TODO: Find out how to get Slack room name
-        /*var room = 'general';
-        kanbanize.retrieveComments(function(response){
-            newComments = parseResponse(response);
-            robot.messageRoom(room, newComments);
-        });*/
-        console.log("Running cron");
+	/*Returns any new comments added within the last 15 minutes
+        during the working week.*/
+    var dailyCronJob = cron.job("*/15 06-16 * * 1-5", function(){
+        getComments(1000*60*15); //every 15 minutes
+        console.log("Running daily cron");
     }); 
-    cronJob.start();
+    dailyCronJob.start();
 
+    /*Returns any new comments added over the weekend*/
+    var weeklyCronJob = cron.job("00 06 * * 1", function(){
+        getComments(1000*60*60*61); //every 61 hours. (from 5pm fri - 6am mon)
+        console.log("Running weekly cron");
+    }); 
+    weeklyCronJob.start();
 
     //One-off reply to any user query for any new comments
 	robot.respond(/any new comments\s?\?/i, function(res){
