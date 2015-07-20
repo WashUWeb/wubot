@@ -64,16 +64,14 @@ module.exports = function(robot) {
         var apiCall = JSON.parse(task_data);
         callKanbanize(apiCall, function(response){
             var room = response.lanename;
+            var color = response.color;
+            console.log(color);
             displayComment(comment, room);
         });
     };
 
     /*Function to format and display any obtained comment in given Slack room*/
     var displayComment = function(comment, room){
-        
-        var green = '#48CE78'
-        var blue = '#286EA6'
-        var red = '#E5283E'
         
         var msg = {
                   message: {
