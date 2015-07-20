@@ -95,7 +95,7 @@ module.exports = function(robot) {
               short: true
             }, {
               title: comment.taskid,
-              title_link: "http://wustlpa.kanbanize.com/ctrl_board/9",
+              value: "<http://wustlpa.kanbanize.com/ctrl_board/9/|KanbanBoard>",
               short: true
             }
           ]
