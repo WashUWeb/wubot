@@ -76,7 +76,7 @@ module.exports = function(robot) {
         var msg = {
                   message: {
                     reply_to: "general",
-                    room: "general"
+                    room: room
                      }
                 };
 
