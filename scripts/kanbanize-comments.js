@@ -66,12 +66,12 @@ module.exports = function(robot) {
             var room = response.lanename;
             var color = response.color;
             console.log(color);
-            displayComment(comment, room);
+            displayComment(comment, room, color);
         });
     };
 
     /*Function to format and display any obtained comment in given Slack room*/
-    var displayComment = function(comment, room){
+    var displayComment = function(comment, room, color){
         
         var msg = {
                   message: {
@@ -86,7 +86,7 @@ module.exports = function(robot) {
                     + comment.taskid + "`: \"" + comment.text 
                     + "\" \n\n" + "http://wustlpa.kanbanize.com/ctrl_board/9",
           pretext: '',
-          color: blue,
+          color: color,
           mrkdwn_in: ["text", "title", "fallback", "fields"],
           fields: [
             {
