@@ -71,14 +71,15 @@ module.exports = function(robot) {
         });
         var apiCall = JSON.parse(task_data);
         callKanbanize(apiCall, function(response) {
+            var task = response.title;
             var room = channels[response.lanename];
             var color = response.color;
-            displayComment(comment, room, color);
+            displayComment(task, comment, room, color);
         });
     };
 
     /*Function to format and display any obtained comment in given Slack room*/
-    var displayComment = function(comment, room, commentColor) {
+    var displayComment = function(taskTitle, comment, room, commentColor) {
         link = "https://wustlpa.kanbanize.com/ctrl_board/9/" + comment.taskid;
         var msg = {
             message: {
@@ -96,7 +97,7 @@ module.exports = function(robot) {
             color: commentColor,
             mrkdwn_in: ["pretext", "title", "fallback", "fields"],
             fields: [{
-                title: "Comment",
+                title: taskTitle,
                 value: comment.text,
                 short: true
             }, {
@@ -133,7 +134,7 @@ module.exports = function(robot) {
         var apiCall = JSON.parse(board_data);
         callKanbanize(apiCall, function(response) {
             var comments = response.activities;
-            var earliestTime = new Date(Date.now() - fifteenMinutes); //default
+            var earliestTime = new Date(Date.now() - (1000*60*60))//fifteenMinutes); //default
 
             if (null != time) {
                 earliestTime = new Date(Date.now() - time);
