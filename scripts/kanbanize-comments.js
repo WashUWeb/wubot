@@ -116,7 +116,7 @@ module.exports = function(robot) {
         var fromTime = null != time ? new Date(Date.now() - time) : new Date();
         var from = kanbanizeDate(fromTime);
         /*Next day; ensures all comments include current day.*/
-        var end = kanbanizeDate(new Date(Date.now() + day);
+        var end = kanbanizeDate(new Date(Date.now() + day));
 
         /*required parameters to retrieve comments from Kanbanize api*/
         var board_data = JSON.stringify({
@@ -133,7 +133,7 @@ module.exports = function(robot) {
         var apiCall = JSON.parse(board_data);
         callKanbanize(apiCall, function(response) {
             var comments = response.activities;
-            var earliestTime = new Date(Date.now() - fifteenMinutes) //default
+            var earliestTime = new Date(Date.now() - fifteenMinutes); //default
 
             if (null != time) {
                 earliestTime = new Date(Date.now() - time);
