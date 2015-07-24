@@ -138,6 +138,7 @@ module.exports = function(robot) {
         callKanbanize(apiCall, function(response) {
             var comments = response.activities;
             console.log(comments);
+            console.log("LOGS ARE WORKING AT THE VERY BLOODY LEAST");
             var earliestTime = new Date(Date.now() - (1000*60*60*3));
 
             if (null != time) {
