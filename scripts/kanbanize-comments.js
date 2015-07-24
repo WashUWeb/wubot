@@ -13,6 +13,7 @@
 //  KANBANIZE_API_URL - specify Kanbanize api url, 
 //      e.g. http://<subdomain>.kanbanize.com/index.php/api/kanbanize/
 //  KANBANIZE_BOARD_ID - specify which Kanban board to check
+//  TZ - Timezone used by node-cron
 //
 // Commands:
 //   wubot any new comments ? - returns any new comments on kanbanize cards
@@ -21,6 +22,8 @@ module.exports = function(robot) {
 
     /*Load node-cron module to enable cron job to run*/
     var cron = require('cron');
+    /*Time zone used by node-cron*/
+    var tz = process.env.TZ;
 
     /*Time constants in milliseconds*/
     var day = 1000 * 60 * 60 * 24;
@@ -135,6 +138,7 @@ module.exports = function(robot) {
         var apiCall = JSON.parse(board_data);
         callKanbanize(apiCall, function(response) {
             var comments = response.activities;
+            console.log(comments);
             var earliestTime = new Date(Date.now() - (1000*60*60*3));
 
             if (null != time) {
@@ -154,14 +158,16 @@ module.exports = function(robot) {
     /*Returns any new comments added within the given time period
         during the working week.*/
     var dailyCronJob = cron.job("*/15 06-16 * * 1-5", function() {
+        console.log("Running daily cron");
         getComments(process.env.CRON_TIME_INTERVAL); 
-    }, null, true, 'America/Chicago');
+    }, null, true, tz);
     dailyCronJob.start();
 
     /*Returns any new comments added over the weekend*/
     var weeklyCronJob = cron.job("00 06 * * 1", function() {
+        console.log("Running weekly cron")
         getComments(weekendHours); //every 61 hours. (from 5pm fri - 6am mon)
-    });
+    }, null, true, tz);
     weeklyCronJob.start();
 
     //One-off reply to any user query for any new comments
