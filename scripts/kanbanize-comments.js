@@ -12,6 +12,7 @@
 //  KANBANIZE_API_KEY - to link with Kanbanize.com
 //  KANBANIZE_API_URL - specify Kanbanize api url, 
 //      e.g. http://<subdomain>.kanbanize.com/index.php/api/kanbanize/
+//  KANBANIZE_CARD_URL - specify url to link cards to
 //  KANBANIZE_BOARD_ID - specify which Kanban board to check
 //  TZ - Timezone used by node-cron
 //
@@ -19,12 +20,16 @@
 //   wubot any new comments ? - returns any new comments on kanbanize cards
 
 module.exports = function(robot) {
-
     /*Load node-cron module to enable cron job to run*/
     var cron = require('cron');
     /*Time zone used by node-cron*/
     var tz = process.env.TZ;
-
+    /*Map for kanbanize lane names to slack channel names*/
+    var channels = {
+            "TAB": "tab",
+            "Bjorn": "pod-bjorn",
+            "Pod Squad": "pod-squad"
+    };
     /*Time constants in milliseconds*/
     var day = 1000 * 60 * 60 * 24;
     var weekendHours = 1000 * 60 * 60 * 61;
@@ -54,16 +59,10 @@ module.exports = function(robot) {
     };
 
     /*Function to get name of lane a comment's task is in. Used to determine
-        what channel said comment should be posted in. Assumes that the lane
-        name and channel name are analogous. Can link the lane name and channel
-        name using a json file if necessary*/
+        what channel said comment should be posted in, and display it. Assumes 
+        that the lane name and channel name are analogous. Can link the lane 
+        name and channel name using a json file if necessary*/
     var displayToLane = function(comment) {
-        var channels = {
-            "TAB": "tab",
-            "Bjorn": "pod-bjorn",
-            "Pod Squad": "pod-squad"
-        };
-
         var taskID = comment.taskid;
         var task_data = JSON.stringify({
             command: "get_task_details",
@@ -74,55 +73,52 @@ module.exports = function(robot) {
             }
         });
         var apiCall = JSON.parse(task_data);
+
         callKanbanize(apiCall, function(response) {
-            var task = response.title;
-            var room = channels[response.lanename];
-            var color = response.color;
-            displayComment(task, comment, room, color);
+            var link = process.env.KANBANIZE_CARD_URL 
+                     + process.env.KANBANIZE_BOARD_ID 
+                     + "/" 
+                     + comment.taskid;
+
+            var msg = {
+                message: {
+                    reply_to: "general",
+                    room: channels[response.lanename]
+                }
+            };
+
+            var content = {
+                text: '',
+                fallback: comment.author + " *added a comment* on `" 
+                            + comment.taskid + "`: \"" + comment.text 
+                            + "\" \n\n" + link,
+                pretext: comment.event + " by *" + comment.author + "*\n",
+                color: response.color,
+                mrkdwn_in: ["pretext", "title", "fallback", "fields"],
+                fields: [{
+                    title: response.title,
+                    value: comment.text,
+                    short: true
+                }, {
+                    title: "Task ID",
+                    value: "<" + link + "|" + comment.taskid + ">",
+                    short: true
+                }]
+            };
+
+            msg.content = content;
+            robot.emit('slack-attachment', msg);
         });
-    };
-
-    /*Function to format and display any obtained comment in given Slack room*/
-    var displayComment = function(taskTitle, comment, room, commentColor) {
-        link = "https://wustlpa.kanbanize.com/ctrl_board/9/" + comment.taskid;
-        var msg = {
-            message: {
-                reply_to: "general",
-                room: room
-            }
-        };
-
-        var content = {
-            text: '',
-            fallback: comment.author + " *added a comment* on `" 
-                        + comment.taskid + "`: \"" + comment.text 
-                        + "\" \n\n" + link,
-            pretext: comment.event + " by *" + comment.author + "*\n",
-            color: commentColor,
-            mrkdwn_in: ["pretext", "title", "fallback", "fields"],
-            fields: [{
-                title: taskTitle,
-                value: comment.text,
-                short: true
-            }, {
-                title: "Task ID",
-                value: "<" + link + "|" + comment.taskid + ">",
-                short: true
-            }]
-        };
-
-        msg.content = content;
-        robot.emit('slack-attachment', msg);
     };
 
     /*Function to get all comments made from a given time to now*/
     var getComments = function(time) {
+        time = null != time? time : process.env.CRON_TIME_INTERVAL; //default
         /*How far back to query api*/
-        var fromTime = null != time ? new Date(Date.now() - time) : new Date();
-        var from = kanbanizeDate(fromTime);
+        var earliestTime = new Date(Date.now() - time);
+        var from = kanbanizeDate(earliestTime);
         /*Next day; ensures all comments include current day.*/
         var end = kanbanizeDate(new Date(Date.now() + day));
-
         /*required parameters to retrieve comments from Kanbanize api*/
         var board_data = JSON.stringify({
             command: "get_board_activities",
@@ -136,15 +132,9 @@ module.exports = function(robot) {
             }
         });
         var apiCall = JSON.parse(board_data);
+
         callKanbanize(apiCall, function(response) {
             var comments = response.activities;
-            console.log(comments);
-            var earliestTime = new Date(Date.now() - (1000*60*60*3));
-
-            if (null != time) {
-                earliestTime = new Date(Date.now() - time);
-            }
-            console.log(earliestTime);
             /*Display any comments that were made within specified time*/
             for (var i = 0; i < comments.length; i++) {
                 comment = comments[i];
