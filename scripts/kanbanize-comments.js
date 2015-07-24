@@ -7,7 +7,8 @@
 //
 // Configuration:
 //  should set the following environment variables:
-//  HUBOT_SLACK_TOKEN - for communication with Slack       
+//  HUBOT_SLACK_TOKEN - for communication with Slack     
+//  CRON_TIME_INTERVAL - how often hubot pings kanbanize, in milliseconds  
 //  KANBANIZE_API_KEY - to link with Kanbanize.com
 //  KANBANIZE_API_URL - specify Kanbanize api url, 
 //      e.g. http://<subdomain>.kanbanize.com/index.php/api/kanbanize/
@@ -15,15 +16,17 @@
 //
 // Commands:
 //   wubot any new comments ? - returns any new comments on kanbanize cards
+
 module.exports = function(robot) {
 
     /*Load node-cron module to enable cron job to run*/
     var cron = require('cron');
 
-    /*Time constants*/
+    /*Time constants in milliseconds*/
     var day = 1000 * 60 * 60 * 24;
-    var fifteenMinutes = 1000 * 60 * 15; 
     var weekendHours = 1000 * 60 * 60 * 61;
+    console.log(process.env.CRON_TIME_INTERVAL);
+    console.log(weekendHours);
 
     /*Simple function to format date in manner acceptable by Kanbanize API*/
     var kanbanizeDate = function(date) {
@@ -134,6 +137,7 @@ module.exports = function(robot) {
         var apiCall = JSON.parse(board_data);
         callKanbanize(apiCall, function(response) {
             var comments = response.activities;
+            console.log(comments);
             var earliestTime = new Date(Date.now() - (1000*60*60))//fifteenMinutes); //default
 
             if (null != time) {
@@ -151,11 +155,12 @@ module.exports = function(robot) {
         });
     };
 
-    /*Returns any new comments added within the last 15 minutes
+    /*Returns any new comments added within the given time period
         during the working week.*/
     var dailyCronJob = cron.job("*/15 06-16 * * 1-5", function() {
-        getComments(fifteenMinutes); //every 15 minutes
-    });
+        console.log("Running daily cron");
+        getComments(process.env.CRON_TIME_INTERVAL); 
+    }, null, true, 'America/Chicago');
     dailyCronJob.start();
 
     /*Returns any new comments added over the weekend*/
