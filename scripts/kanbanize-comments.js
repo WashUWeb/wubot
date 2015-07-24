@@ -143,12 +143,13 @@ module.exports = function(robot) {
             if (null != time) {
                 earliestTime = new Date(Date.now() - time);
             }
-
+            console.log(earliestTime);
             /*Display any comments that were made within specified time*/
             for (var i = 0; i < comments.length; i++) {
                 comment = comments[i];
                 commentTime = new Date(comment.date);
                 if (commentTime.getTime() >= earliestTime.getTime()) {
+                    console.log("displaying " + comment.text + " to lane");
                     displayToLane(comment);
                 }
             }
