@@ -25,8 +25,6 @@ module.exports = function(robot) {
     /*Time constants in milliseconds*/
     var day = 1000 * 60 * 60 * 24;
     var weekendHours = 1000 * 60 * 60 * 61;
-    console.log(process.env.CRON_TIME_INTERVAL);
-    console.log(weekendHours);
 
     /*Simple function to format date in manner acceptable by Kanbanize API*/
     var kanbanizeDate = function(date) {
@@ -74,6 +72,7 @@ module.exports = function(robot) {
         });
         var apiCall = JSON.parse(task_data);
         callKanbanize(apiCall, function(response) {
+            console.log(response.title);
             var task = response.title;
             var room = channels[response.lanename];
             var color = response.color;
@@ -111,6 +110,7 @@ module.exports = function(robot) {
         };
 
         msg.content = content;
+        console.log(msg);
         robot.emit('slack-attachment', msg);
     };
 
@@ -138,7 +138,7 @@ module.exports = function(robot) {
         callKanbanize(apiCall, function(response) {
             var comments = response.activities;
             console.log(comments);
-            var earliestTime = new Date(Date.now() - (1000*60*60))//fifteenMinutes); //default
+            var earliestTime = new Date(Date.now() - (1000*60*60*3))//fifteenMinutes); //default
 
             if (null != time) {
                 earliestTime = new Date(Date.now() - time);
