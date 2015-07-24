@@ -138,7 +138,7 @@ module.exports = function(robot) {
         callKanbanize(apiCall, function(response) {
             var comments = response.activities;
             console.log(comments);
-            var earliestTime = new Date(Date.now() - (1000*60*60*3))//fifteenMinutes); //default
+            var earliestTime = new Date(Date.now() - (1000*60*60*3));
 
             if (null != time) {
                 earliestTime = new Date(Date.now() - time);
