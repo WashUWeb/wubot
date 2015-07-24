@@ -72,7 +72,6 @@ module.exports = function(robot) {
         });
         var apiCall = JSON.parse(task_data);
         callKanbanize(apiCall, function(response) {
-            console.log(response.title);
             var task = response.title;
             var room = channels[response.lanename];
             var color = response.color;
@@ -110,7 +109,6 @@ module.exports = function(robot) {
         };
 
         msg.content = content;
-        console.log(msg);
         robot.emit('slack-attachment', msg);
     };
 
@@ -137,20 +135,16 @@ module.exports = function(robot) {
         var apiCall = JSON.parse(board_data);
         callKanbanize(apiCall, function(response) {
             var comments = response.activities;
-            console.log(comments);
-            console.log("LOGS ARE WORKING AT THE VERY BLOODY LEAST");
             var earliestTime = new Date(Date.now() - (1000*60*60*3));
 
             if (null != time) {
                 earliestTime = new Date(Date.now() - time);
             }
-            console.log(earliestTime);
             /*Display any comments that were made within specified time*/
             for (var i = 0; i < comments.length; i++) {
                 comment = comments[i];
                 commentTime = new Date(comment.date);
                 if (commentTime.getTime() >= earliestTime.getTime()) {
-                    console.log("displaying " + comment.text + " to lane");
                     displayToLane(comment);
                 }
             }
@@ -160,7 +154,6 @@ module.exports = function(robot) {
     /*Returns any new comments added within the given time period
         during the working week.*/
     var dailyCronJob = cron.job("*/15 06-16 * * 1-5", function() {
-        console.log("Running daily cron");
         getComments(process.env.CRON_TIME_INTERVAL); 
     }, null, true, 'America/Chicago');
     dailyCronJob.start();
