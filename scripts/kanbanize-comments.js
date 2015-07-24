@@ -33,6 +33,7 @@ module.exports = function(robot) {
     /*Time constants in milliseconds*/
     var day = 1000 * 60 * 60 * 24;
     var weekendHours = 1000 * 60 * 60 * 61;
+    var overnight = 1000 * 60 * 60 * 13;
 
     /*Simple function to format date in manner acceptable by Kanbanize API*/
     var kanbanizeDate = function(date) {
@@ -154,10 +155,17 @@ module.exports = function(robot) {
     }, null, true, tz);
     dailyCronJob.start();
 
+    /* */
+    var overnightCronJob = cron.job("00 06 * * 2-5", function() {
+        console.log("Running overnight cron");
+        getComments(overnight); //from 13 hours 
+    }, null, true, tz);
+    overnightCronJob.start();
+
     /*Returns any new comments added over the weekend*/
     var weeklyCronJob = cron.job("00 06 * * 1", function() {
         console.log("Running weekly cron")
-        getComments(weekendHours); //every 61 hours. (from 5pm fri - 6am mon)
+        getComments(weekendHours); //from 61 hours. (from 5pm fri - 6am mon)
     }, null, true, tz);
     weeklyCronJob.start();
 
