@@ -17,5 +17,5 @@ troll = [
 
 module.exports = (robot) ->
 
-	# robot.hear /ChrisBot/i, (msg) ->
-	# 	msg.send msg.random troll
+	#robot.hear /ChrisBot/i, (msg) ->
+	 	#msg.send msg.random troll

@@ -5,24 +5,27 @@
   "author": "Joe McGill <joemcgill@wustl.edu>",
   "description": "A bot for WUSTLweb",
   "dependencies": {
-    "hubot-maps": "0.0.0",
-    "hubot-help": "^0.1.1",
-    "hubot-google-images": "^0.1.0",
+    "cron": "^1.0.9",
+    "hubot": "^2.13.2",
+    "hubot-bitbucket-pr": "^0.1.1",
     "hubot-diagnostics": "0.0.1",
-    "hubot-pugme": "^0.1.0",
-    "hubot-youtube": "^0.1.2",
-    "hubot-rules": "^0.1.0",
+    "hubot-google-images": "^0.1.0",
     "hubot-google-translate": "^0.1.0",
+    "hubot-help": "^0.1.1",
     "hubot-heroku-keepalive": "0.0.4",
-    "hubot-shipit": "^0.1.1",
-    "hubot-slack": "^2.2.0",
-    "hubot-redis-brain": "0.0.2",
-    "hubot-scripts": "^2.5.16",
-    "hubot": "^2.9.3",
+    "hubot-maps": "0.0.2",
+    "hubot-pugme": "^0.1.0",
+    "hubot-redis-brain": "0.0.3",
+    "hubot-rules": "^0.1.1",
+    "hubot-scripts": "^2.16.1",
+    "hubot-shipit": "^0.2.0",
+    "hubot-slack": "^3.3.0",
     "hubot-yo": "^0.2.1",
-    "hubot-bitbucket-pr": "^0.1.1"
+    "hubot-youtube": "^0.1.2",
+    "time": "^0.11.3"
   },
   "engines": {
-    "node": "0.10.x"
+    "node": "0.10.x",
+    "npm" : "2.1.x"
   }
 }
