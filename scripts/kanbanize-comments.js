@@ -26,7 +26,7 @@ module.exports = function(robot) {
     var tz = process.env.TZ;
     /*Map for kanbanize lane names to slack channel names*/
     var channels = {
-            "Bat Pod": "bat-pod",
+            "BAT Pod": "bat-pod",
             "Bjorn": "pod-bjorn",
             "Pod Squad": "pod-squad"
     };
