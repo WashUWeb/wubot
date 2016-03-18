@@ -7,6 +7,7 @@
   "dependencies": {
     "cron": "^1.0.9",
     "hubot": "^2.13.2",
+    "hubot-available": "^1.1.0",
     "hubot-bitbucket-pr": "^0.1.1",
     "hubot-diagnostics": "0.0.1",
     "hubot-google-images": "^0.1.0",
@@ -26,6 +27,6 @@
   },
   "engines": {
     "node": "0.10.x",
-    "npm" : "2.1.x"
+    "npm": "2.1.x"
   }
 }
